@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>you arrived Just Within Time</title>
+    <script>
+        async function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+            
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem("jwt", data.token);
+                alert("Login successful! Token stored.");
+            } else {
+                alert("Login failed: " + data.error);
+            }
+        }
+
+        async function getFlag() {
+            const token = localStorage.getItem("jwt");
+            if (!token) {
+                alert("Please log in first!");
+                return;
+            }
+
+            const response = await fetch("/flag", {
+                method: "GET",
+                headers: { "Authorization": token }
+            });
+
+            const data = await response.json();
+            alert(data.flag || data.error);
+        }
+    </script>
+</head>
+<body>
+    <h1>you arrived Just Within Time</h1>
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+
+    <h2>Get Flag</h2>
+    <button onclick="getFlag()">Retrieve Flag</button>
+</body>
+</html>
